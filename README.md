@@ -14,6 +14,8 @@ Lets compare the read-write path of various Big Data Technologies
 * Now namenode checks for required privileges, if the client has sufficient privileges then namenode provides the address of the slaves where a file is stored.
 *  Now the client will interact directly with the respective datanodes to read the data blocks.
 
+![](hadoop.png)
+
 ### HBASE
 
 * There is a special HBase Catalog table called the META table, which holds the location of the regions in the cluster.
@@ -25,6 +27,10 @@ Lets compare the read-write path of various Big Data Technologies
   * the change cannot be written to a HFile immediately because the data in a HFile must be sorted by the row key. This allows searching for random rows efficiently when reading the data.
   * each change is stored in a place in memory called the memstore, which cheaply and efficiently supports random writes. Data in the memstore is sorted in the same manner as data in a HFile.
   *  When the memstore accumulates enough data, the entire sorted set is written to a new HFile in HDFS
+
+![](hbase.png)
+
+![](hbase2.png)
 
 ### ZOOKEEPER
 * Once a ZooKeeper ensemble starts, it will wait for the clients to connect.
@@ -39,6 +45,18 @@ Lets compare the read-write path of various Big Data Technologies
   * The connected server will forward the request to the leader and then the leader will reissue the writing request to all the followers.
   * If only a majority of the nodes respond successfully, then the write request will succeed, and a successful return code will be sent to the client. Otherwise, the write request will fail. The strict majority of nodes is called Quorum.
 
+![](zookeeper.png)
+
+In order to achieve high read-availability, Zookeeper guarantees a weak-consistency over the replicates: a read can always be answered by a client node, and the answer returned may be a stale value (even a new version has been committed through the leader).  
+Then it is the users' responsibility to decide whether the answer for a read is "stale-able" or not, since not all applications require the up-to-date information.   
+So the following choices are provided:
+1) If your application does not need up-to-date values for reads, you can get high read-availability by requesting data directly from the client.
+2) If your application requires up-to-date values for reads, you should use the "sync" API before your read request to sync the client-side version with the leader.  
+So as a conclusion, Zookeeper provides a customizable consistency guarantee, and users can decide the balance between availability and consistency.
+
+
+It is worth mentioning that the zookeeper also stores a version-id with the znode data. If a client decides to overwrite the data, it can specify the version-id that it has seen, in the write request. The leader will reject the write request, if the version of the data that the client has seen, is an older version than what the leader has. This helps if the client misses a write between the sync request and write request.
+
 
 ### KAFKA
 * Kafka Brokers handle read and writes. Each topic has one or more partitions, and each partition has a LEADER broker. 
@@ -47,6 +65,8 @@ Lets compare the read-write path of various Big Data Technologies
 * Even when you have a replicated partition on a different broker, Kafka wouldn’t let you read or write from it because in each replicated set of partitions, there is a LEADER and the rest of them are just mere FOLLOWERS serving as backup. 
   * The followers keep on syncing the data from the leader partition periodically, waiting for their chance to shine.
   * When the leader goes down, one of the in-sync follower partitions is chosen as the new leader and now you can consume data from this partition.
+
+![](kafka.png)
 
 ### CASSANDRA
 * In Cassandra, the cluster of nodes is stored as a “ring” of nodes and writes are replicated to N nodes using a replication placement strategy.
