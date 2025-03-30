@@ -136,7 +136,7 @@ It is worth mentioning that the zookeeper also stores a version-id with the znod
 Cassandra offers several levels of consistency like ANY, ONE, QUORUM and ALL, for both reads and writes.   
 In contrast, DynamoDB simplifies this to two configurable consistency levels for reads — eventual consistency and strong consistency. 
 
-****For writes, the consistency level is not configurable at all.
+**For DynamoDB writes, the consistency level is not configurable at all.**  
 Writes are always strongly consistent — every write is synchronously written to two replicas (2 AZs) and asynchronously written to one more. 
 This ensures that any data are written is durable for the life of the datastore. 
 
