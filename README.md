@@ -1,4 +1,53 @@
-Lets compare the read-write path of various Big Data Technologies
+### What’s the difference between an ACID and a BASE database?
+ACID and BASE are database transaction models that determine how a database organizes and manipulates data.   
+In the context of databases, a transaction is any operation that the database considers a single unit of work.  
+A transaction must complete fully for the database to remain consistent. For example, when you transfer money from one bank account to another, the money must leave your account and must be added to the third-party account. You cannot call the transaction complete without both steps occurring. 
+
+
+### ACID compared with BASE
+ACID and BASE are acronyms for different database properties representing how the database behaves during online transaction processing. 
+
+### ACID 
+ACID stands for atomicity, consistency, isolation, and durability.
+
+#### Atomicity
+Atomicity ensures that all steps in a single database transaction are either fully-completed or reverted to their original state. For example, in a reservation system, both tasks—booking seats and updating customer details—must be completed in a single transaction. You cannot have seats reserved for an incomplete customer profile. No changes are made to the data if any part of the transaction fails.
+
+### Consistency
+Consistency guarantees that data meets predefined integrity constraints and business rules. Even if multiple users perform similar operations simultaneously, data remains consistent for all. For example, consistency ensures that when transferring funds from one account to another, the total balance before and after the transaction remains the same. If Account A has $200 and Account B has $400, the total balance is $600. After A transfers $100 to B, A has $100 and B has $500. The total balance is still $600. 
+
+### Isolation
+Isolation ensures that a new transaction, accessing a particular record, waits until the previous transaction finishes before it commences operation. It ensures that concurrent transactions do not interfere with each other, maintaining the illusion that they are executing serially. For another example, is a multi-user inventory management system. If one user updates the quantity of a product, another user accessing the same product information will see a consistent and isolated view of the data, unaffected by the ongoing update until it is committed.
+
+### Durability
+Durability ensures that the database maintains all committed records, even if the system experiences failure. It guarantees that when ACID transactions are committed, all changes are permanent and unimpacted by subsequent system failures. For example, in a messaging application, when a user sends a message and receives a confirmation of successful delivery, the durability property ensures that the message is never lost. This remains true even if the application or server encounters a failure.
+
+### BASE
+BASE stands for basically available, soft state, and eventually consistent. The acronym highlights that BASE is opposite of ACID, like their chemical equivalents.
+
+#### Basically available
+Basically available is the database’s concurrent accessibility by users at all times. One user doesn’t need to wait for others to finish the transaction before updating the record. For example, during a sudden surge in traffic on an ecommerce platform, the system may prioritize serving product listings and accepting orders. Even if there is a slight delay in updating inventory quantities, users continue to check out items.
+
+#### Soft state
+Soft state refers to the notion that data can have transient or temporary states that may change over time, even without external triggers or inputs. It describes the record’s transitional state when several applications update it simultaneously. The record’s value is eventually finalized only after all transactions complete. For example, if users edit a social media post, the change may not be visible to other users immediately. However, later on, the post updates by itself (reflecting the older change) even though no user triggered it.
+
+#### Eventually consistent
+Eventually consistent means the record will achieve consistency when all the concurrent updates have been completed. At this point, applications querying the record will see the same value. For example, consider a distributed document editing system where multiple users can simultaneously edit a document. If User A and User B both edit the same section of the document simultaneously, their local copies may temporarily differ until the changes are propagated and synchronized. However, over time, the system ensures eventual consistency by propagating and merging the changes made by different users.
+
+
+## CAP Theorem
+The CAP theorem specifies that distributed systems can possess two of the following traits at any given time:
+* Consistency
+* Availability
+* Partition tolerance
+
+**Because partition tolerance is mandatory for databases storing massive datasets**, Cassandra and HBase differ in availability and consistency. 
+* Cassandra/DynamoDB has high availability and partition tolerance because of its peer-to-peer node arrangement. 
+* Hadoop/HBase provides consistency with partition tolerance because a single HBase primary replicates data to all nodes.
+
+![alt text](cap.png)
+
+## Lets compare the read-write path of various Big Data Technologies
 
 ### HDFS
 
